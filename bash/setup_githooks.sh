@@ -8,5 +8,5 @@ cd ../hooks
 for f in ./*
 do
    echo $f
-   ln -sf ../../gitTA/hooks/$f ../../.git/hooks/$f
+   ln -sf ../../hooks/$f ../.git/hooks/$f
 done
