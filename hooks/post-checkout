@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 # Collect the parameters
-# previous_head = sys.argv[1]
-# new_head = sys.argv[2]
-#is_branch_checkout = sys.argv[3]
+previous_head = sys.argv[1]  # where the head previously was before checkout
+new_head = sys.argv[2]  # where the head now sits. If it was a branch checkout
+        # then this is a new_branch
+is_branch_checkout = sys.argv[3]  # 1 or 0 flag indicating if checkout was
+        # a branch checkout (1) or just moving the head around (0)
 import gitta_hook
 import sys
-gitta_hook.trigger(*sys.argv)
+gitta_hook.trigger(*sys.argv, previous_head=previous_head, new_head=new_head,
+                   is_branch_checkout=is_branch_checkout)
 
-#python .gitta/py/main.py "post-checkout" # python runs from main git directory
