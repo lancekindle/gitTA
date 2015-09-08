@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+# Collect the parameters
+# previous_head = sys.argv[1]
+# new_head = sys.argv[2]
+#is_branch_checkout = sys.argv[3]
+import gitta_hook
+import sys
+gitta_hook.trigger(*sys.argv)
+
+#python .gitta/py/main.py "post-checkout" # python runs from main git directory

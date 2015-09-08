@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+
+import gitta_hook
+import sys
+gitta_hook.trigger(*sys.argv)
+
+
