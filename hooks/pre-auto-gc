@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+# https://github.com/git/git/blob/master/Documentation/githooks.txt#L374
+# This hook is invoked by 'git gc --auto'. It takes no parameter, and
+# exiting with non-zero status from this script causes the 'git gc --auto'
+# to abort.
+import gitta_hook
+import sys
+kwargs = {}
+gitta_hook.trigger(*sys.argv, **kwargs)
+

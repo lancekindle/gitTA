@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+
+# https://github.com/git/git/blob/master/Documentation/githooks.txt#L140
+# This hook is called by 'git rebase' and can be used to prevent a
+# branch from getting rebased.  The hook may be called with one or
+# two parameters.  The first parameter is the upstream from which
+# the series was forked.  The second parameter is the branch being
+# rebased, and is not set when rebasing the current branch.
+import gitta_hook
+import sys
+from subprocess import check_output
+branch_upstream = sys.argv[1]
+kwargs = {'branch_upstream': branch_upstream}
+if len(sys.argv) > 2:
+    branch_rebasing = sys.argv[2]
+else:  # branch_rebasing is current branch. WARNING: if your head is not at end of branch, does it rebase from the head, or all the way to end of branch?
+    branch_rebasing = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
+kwargs['branch_rebasing'] = branch_rebasing
+gitta_hook.trigger(*sys.argv, **kwargs)
+
