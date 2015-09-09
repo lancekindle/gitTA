@@ -1,6 +1,19 @@
 #!/usr/bin/env python
 
+# https://github.com/git/git/blob/master/Documentation/githooks.txt#L167
+# This hook is invoked by 'git merge', which happens when a 'git pull'
+# is done on a local repository.  The hook takes a single parameter, a status
+# flag specifying whether or not the merge being done was a squash merge.
+# This hook cannot affect the outcome of 'git merge' and is not executed,
+# if the merge failed due to conflicts.
+# 
+# This hook can be used in conjunction with a corresponding pre-commit hook to
+# save and restore any form of metadata associated with the working tree
+# (e.g.: permissions/ownership, ACLS, etc).  See contrib/hooks/setgitperms.perl
+# for an example of how to do this.
 import gitta_hook
 import sys
-gitta_hook.trigger(*sys.argv)
+is_squash_merge = sys.argv[1]
+kwargs = {'is_squash_merge': is_squash_merge}
+gitta_hook.trigger(*sys.argv, **kwargs)
 

@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
-
+# https://github.com/git/git/blob/master/Documentation/githooks.txt#L131
+# This hook is invoked by 'git commit'.  It takes no
+# parameter, and is invoked after a commit is made.
+# 
+# This hook is meant primarily for notification, and cannot affect
+# the outcome of 'git commit'.
 import gitta_hook
 import sys
-gitta_hook.trigger(*sys.argv)
+kwargs = {}
+gitta_hook.trigger(*sys.argv, **kwargs)
 
 
