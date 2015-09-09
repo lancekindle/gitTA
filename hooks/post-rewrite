@@ -32,6 +32,7 @@
 # processed by rebase.
 import gitta_hook
 import sys
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 command = sys.argv[1]  # the command that invoked post-rewrite
 kwargs = {'command': command}
 gitta_hook.trigger(*sys.argv, **kwargs)

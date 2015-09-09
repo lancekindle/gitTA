@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import sys
-import gitta_hook
 
 # https://github.com/git/git/blob/master/Documentation/githooks.txt#L149
 # This hook is invoked when a 'git checkout' is run after having updated the
@@ -17,8 +15,9 @@ import gitta_hook
 # This hook can be used to perform repository validity checks, auto-display
 # differences from the previous HEAD if different, or set working dir metadata
 # properties.
-
-# Collect the parameters
+import sys
+import gitta_hook
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 head_previous = sys.argv[1]  # where the head previously was before checkout
 head_current = sys.argv[2]  # where the head now sits. If it was a branch
         # checkout then this is a also new_branch

@@ -15,6 +15,7 @@
 # 'commit-msg' hook, if the latter is enabled.
 import gitta_hook
 import sys
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 commit_msg_path = sys.argv[1]
 kwargs = {'commit_msg_path', commit_msg_path}
 gitta_hook.trigger(*sys.argv, **kwargs)

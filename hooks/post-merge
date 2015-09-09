@@ -13,6 +13,7 @@
 # for an example of how to do this.
 import gitta_hook
 import sys
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 is_squash_merge = sys.argv[1]
 kwargs = {'is_squash_merge': is_squash_merge}
 gitta_hook.trigger(*sys.argv, **kwargs)

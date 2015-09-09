@@ -9,6 +9,7 @@
 import gitta_hook
 import sys
 from subprocess import check_output
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 branch_upstream = sys.argv[1]
 kwargs = {'branch_upstream': branch_upstream}
 if len(sys.argv) > 2:

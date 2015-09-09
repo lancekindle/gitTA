@@ -26,6 +26,7 @@
 import gitta_hook
 import sys
 # gather variables
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 commit_msg_path = sys.argv[1]
 kwargs = {'commit_msg_path': commit_msg_path}
 if len(sys.argv) > 2:

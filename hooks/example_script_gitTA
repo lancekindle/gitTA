@@ -2,6 +2,7 @@
 
 import gitta_hook
 import sys
+sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 kwargs = {}
 gitta_hook.trigger(*sys.argv, **kwargs)
 
