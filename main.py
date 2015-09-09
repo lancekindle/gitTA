@@ -18,26 +18,26 @@ git = gitTA.gitta()
 @git.listen('pre-push')
 def prepush(*args, **kwargs):
     print(Fore.GREEN)  # set so that ALL next prints will be green
-    print(args)
+    print(args, kwargs)
 
 @git.listen('pre-commit')
 def precommit(*args, **kwargs):
     print(Fore.GREEN)
-    print(args)
+    print(args, kwargs)
 
 @git.listen('post-commit')
 def postcommit(*args, **kwargs):
     print(Fore.GREEN)
-    print(args)
+    print(args, kwargs)
 
 @git.listen('post-checkout')
 def postcheckout(*args, **kwargs):
     print(Fore.GREEN)  # set so that ALL next prints will be green
-    print(args)
+    print(args, kwargs)
 
 @git.listen('post-merge')
 def postmerge(*args, **kwargs):
-    print(args)
+    print(args, kwargs)
 
 if __name__ == '__main__':
     gitTA.gitta.trigger_all_instances(45, event='post-checkout')  # example of what might get passed to postcheckout
