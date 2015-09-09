@@ -20,17 +20,19 @@
 # means a failure of the hook and aborts the commit.  It should not
 # be used as replacement for pre-commit hook.
 
-# The sample `prepare-commit-msg` hook that comes with Git comments
-# out the `Conflicts:` part of a merge's commit message.
+# This also runs if user git commit -m "msg", in which case commit_msg_path
+# will point to a temporary file with "msg" already in there. If the user
+# commits with -m, commit_type will equal 'message'
 import gitta_hook
 import sys
 # gather variables
 commit_msg_path = sys.argv[1]
 kwargs = {'commit_msg_path': commit_msg_path}
 if len(sys.argv) > 2:
-    commit_type = sys.argv[2]
+    commit_type = sys.argv[2]  # 'message', 'template', 'merge', 'squash', 
+                               # 'commit
     kwargs['commit_type'] = commit_type
 if len(sys.argv) > 3:
-    commit_amended_sha1 = sys.argv[3]
+    commit_amended_sha1 = sys.argv[3]  # exists if commit_type='commit'
     kwargs['commit_amended_sha1'] = commit_amended_sha1
 gitta_hook.trigger(*sys.argv, **kwargs)
