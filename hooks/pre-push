@@ -28,8 +28,6 @@
 # to the user by writing to standard error.
 import gitta_hook
 import sys
-print(sys.stdin.readlines())
-raise
 sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 remote_dest_uri = sys.argv[1]  # generally, uri is the name of the remote
                               # but may instead be the url
