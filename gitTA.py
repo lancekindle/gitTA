@@ -25,9 +25,9 @@ class gitta:
                 os.chdir(repo)  # verify each function triggers with cwd in repository
             self.trigger(*args, **kwargs)
 
-    def listen(self, event_name): #self, func, event_name):
-        ''' calling a decorator with a function is significantly different than calling an argumentless decorator.
-        so in this case, register only gets the event_name, and the inside function is called immediately with the
+    def listen(self, event_name):
+        ''' calling a decorator with an argument is significantly different than calling an argumentless decorator.
+        so in this case, listen only gets the event_name, and the wrapper function is called immediately with the
         function to decorate
         : a wrapper to call each "registered/wrapped" event function when the event name matches 
         '''
