@@ -3,6 +3,9 @@
 import gitta_hook
 import sys
 sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
+# the problem with using .split() is that it may split variables that include
+#spaces such as filepaths in windows. These variables usually have surrounding
+# quotes like: "C:\me and you\" or "this is a string var via command line"
 kwargs = {}
 gitta_hook.trigger(*sys.argv, **kwargs)
 
