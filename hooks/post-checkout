@@ -26,7 +26,7 @@ is_branch_checkout = sys.argv[3]  # 1 or 0 flag indicating if checkout was
         # a branch checkout (1) or just moving the head around (0)
 kwargs = {'head_previous': head_previous, 'head_current':head_current,
           'is_branch_checkout': is_branch_checkout}
-reflog = subprocess.check_output(['git', 'reflog', '-n', '1']).strip()
+reflog = check_output(['git', 'reflog', '-n', '1']).strip()
 last_action = reflog.decode('ascii').split()
     # e.g. a[090560c, HEAD@{0}:, checkout:, moving, from, b_old, to, b_new]
 if 'checkout:' in last_action:
