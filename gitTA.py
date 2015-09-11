@@ -1,5 +1,6 @@
 from collections import defaultdict
 import os
+import subprocess
 
 ''' this is the gitTA module. You do not do not modify this file, but instead modify main.py
 to run the code you want
@@ -9,16 +10,16 @@ def listen(event_name):
     to listen to a hook-call
     '''
     def wrapper(func):
-        g = GitHooks()
+        g = Hook()
         g._add_event_function(event_name, func)
         return func
     return wrapper
 
 def trigger(*args, **kwargs):
-    GitHooks.trigger_events_in_all_instances(*args, **kwargs)
+    Hook.trigger_events_in_all_instances(*args, **kwargs)
 
 
-class GitHooks:
+class Hook:
     event_functions = defaultdict(list)
     _class_instances = []
 
@@ -61,3 +62,11 @@ class GitHooks:
             return  # it might also be good to log somewhere that no function was called
         f = self.event_functions[event]
         f(*args, **kwargs)  # trigger function
+
+
+class Branch:
+
+    def undo_checkout(self, *args, **kwargs):
+        ''' for the evil :D. re-checkout the previous branch '''
+        head_previous = kwargs['head_previous']
+        subprocess.call('git checkout ' + head_previous)
