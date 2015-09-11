@@ -67,11 +67,16 @@ class Hook:
 class Branch:
 
     def undo_checkout(self, *args, **kwargs):
-        ''' for the evil :D. re-checkout the previous branch '''
+        ''' for the evil :D. re-checkout the previous branch / commit 
+        must be called from a post-checkout function
+        '''
         print('going to undo checkout')
         print(kwargs)
-        head_previous = kwargs['head_previous']
-        print(head_previous)
+        if kwargs.get('branch_previous', None) is not None:
+            previous = kwargs['branch_previous']
+        else:
+            previous = kwargs['head_previous']
+        print(previous)
         # have to prevent undo_checkout from causing git checkout to trigger
         # post-checkout, which causes undo_checkout to recursively trigger...
         repo_dir, git_dir = kwargs['repo_dir'], kwargs['git_dir']
@@ -79,7 +84,7 @@ class Branch:
         os.chdir('hooks')
         os.rename('post-checkout', 'post-checkout.disable')
         os.chdir(repo_dir)  # have to change back to repo_dir to run git
-        subprocess.call(['git', 'checkout', head_previous])
+        subprocess.call(['git', 'checkout', previous])
         os.chdir(git_dir)
         os.chdir('hooks')
         os.rename('post-checkout.disable', 'post-checkout')
