@@ -15,12 +15,18 @@ def trigger(*args, **kwargs):
             # .git/gitTA (including hooks and py folders) 
     kwargs.update({'git_dir': git_dir, 'repo_dir': repo_dir, 'event': event})
     # now collect important git info that developer may use in kwargs
-    try:
-        cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
-        branch_current = check_output(cmd).strip()
-    except CalledProcessError:  # will print "fatal: ref..." but won't abort
-        branch_current = "(detached)"  # for when the HEAD is detached
-    head_current = check_output(['git', 'rev-parse', 'HEAD']).strip()
+#    try:
+#        cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
+#        branch_current = check_output(cmd).strip()
+#    except CalledProcessError:  # will print "fatal: ref..." but won't abort
+#        branch_current = None  # for when the HEAD is detached
+    cmd = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
+    branch_current = check_output(cmd).strip()  # return HEAD if detached
+    if branch_current == 'HEAD':
+        branch_current = None  # indicate that we are not on a branch
+    head_current = check_output(['git', 'rev-parse', 'HEAD']).strip()  # get sha1
+    kwargs['branch_current'] = branch_current
+    kwargs['head_current'] = head_current
     sys.path.append(path_to_gitta_pyfiles)    # add path so that importing main
                                               # and gitta works
     import main
