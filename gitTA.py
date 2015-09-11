@@ -9,16 +9,16 @@ def listen(event_name):
     to listen to a hook-call
     '''
     def wrapper(func):
-        g = gitta()
+        g = GitHooks()
         g._add_event_function(event_name, func)
         return func
     return wrapper
 
 def trigger(*args, **kwargs):
-    gitta.trigger_all_instances(*args, **kwargs)
+    GitHooks.trigger_events_in_all_instances(*args, **kwargs)
 
 
-class gitta:
+class GitHooks:
     event_functions = defaultdict(list)
     _class_instances = []
 
@@ -31,7 +31,7 @@ class gitta:
         cls._class_instances.append(self)
 
     @classmethod
-    def trigger_all_instances(cls, *args, **kwargs):
+    def trigger_events_in_all_instances(cls, *args, **kwargs):
         repo = kwargs.get('repo_dir', None)
         for self in cls._class_instances:
             if repo:
