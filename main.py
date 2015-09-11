@@ -1,7 +1,7 @@
 # this is the main file that get called
 import os
 import sys
-import gitTA
+import gitTA as git
 import colorama
 from colorama import Fore, Back  # add color output to terminal: we want anything printed to be VERY visible to user
 colorama.init()  # called so that windows colors work
@@ -12,7 +12,6 @@ your methods can listen for the following events:
 pre-push, pre-commit,  # pre-x methods can be aborted by raising an exception
 post-commit, post-checkout, post-merge
 '''
-git = gitTA.gitta()
 
 # pre-* events can be aborted by raising an exception ???
 @git.listen('pre-push')
@@ -40,7 +39,7 @@ def postmerge(*args, **kwargs):
     print(args, kwargs)
 
 if __name__ == '__main__':
-    gitTA.gitta.trigger_all_instances(45, event='post-checkout')  # example of what might get passed to postcheckout
+    git.trigger(45, event='post-checkout')  # example of what might get passed to postcheckout
     # the garbled message that appears before (45, ) is the Fore.GREEN. On normal terminals this garbled output will NOT appear
     
 

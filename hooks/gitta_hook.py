@@ -24,5 +24,5 @@ def trigger(*args, **kwargs):
     sys.path.append(path_to_gitta_pyfiles)    # add path so that importing main
                                               # and gitta works
     import main
-    import gitTA  # order is important. MUST import main before GitTA
-    gitTA.gitta.trigger_all_instances(*args[1:], **kwargs)
+    import gitTA as git # order is important. MUST import main before GitTA
+    git.trigger(*args[1:], **kwargs)

@@ -4,6 +4,19 @@ import os
 ''' this is the gitTA module. You do not do not modify this file, but instead modify main.py
 to run the code you want
 '''
+def listen(event_name):
+    ''' call this function for simplicity when registering
+    to listen to a hook-call
+    '''
+    def wrapper(func):
+        g = gitta()
+        g._add_event_function(event_name, func)
+        return func
+    return wrapper
+
+def trigger(*args, **kwargs):
+    gitta.trigger_all_instances(*args, **kwargs)
+
 
 class gitta:
     event_functions = defaultdict(list)
@@ -24,6 +37,9 @@ class gitta:
             if repo:
                 os.chdir(repo)  # verify each function triggers with cwd in repository
             self.trigger(*args, **kwargs)
+    
+    def _add_event_function(self, event_name, func):
+        self.event_functions[event_name] = func
 
     def listen(self, event_name):
         ''' calling a decorator with an argument is significantly different than calling an argumentless decorator.
@@ -35,7 +51,7 @@ class gitta:
             ''' wrapper gets called immediately with the function to register. What wrapper returns will be the
             replacement function
             '''
-            self.event_functions[event_name] = func
+            self._add_event_function(event_name, func)
             return func  # return function unmodified
         return wrapper
         
