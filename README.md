@@ -24,7 +24,7 @@ With these hooks, its possible to:
 3. Correct file-permissions after branch changes
 4. Undo branch changes to always stay on master
 5. Change files after committing
-6. Most anything good or evil... remember to use your powers responsibly
+6. Most anything good or evil... use your powers responsibly
 
-To install gitTA, copy gitTA into a local git repo of your choice. Edit main.py to your liking, then run the install script, which will move gitTA into your .git directory, overwriting any current hooks with its own. 
-gitTA is local only -- the install script MUST be run each time another user clones your repository.  In short, it's a local tool that must be installed by the user; there is no way to have gitTA pre-installed in a repository, short of passing it around in a zipfile or setting it up as a git template.
+To install gitTA, copy gitTA into a local git repo of your choice. Edit main.py to your liking, then run the install script (located in ./bash/install_githooks.sh), which will move gitTA into your .git directory, overwriting any current hooks with its own. 
+gitTA is local only -- the install script MUST be run each time another user clones your repository.  In short, it's a local tool that must be installed by the user; there is no way to have gitTA pre-installed in a repository, short of passing it around in a zipfile or setting it up as a git template. You can, however, include gitTA in your repository as a visible folder and ask that the user run the install script prior to using it.
