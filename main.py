@@ -1,7 +1,7 @@
 # this is the main file that get called
 import os
 import sys
-import gitTA
+import gitTA as git
 import colorama
 from colorama import Fore, Back  # add color output to terminal: we want anything printed to be VERY visible to user
 colorama.init()  # called so that windows colors work
@@ -19,7 +19,6 @@ post-rebase, pre-auto-gc*
 You can abort git actions marked with * by raising an error in your listening method. e.g. you can abort a commit by raising an error in any of the three commit hooks.
 I strongly suggest you search 'git hook tutorial' online to determine which hook you most want. https://www.atlassian.com/git/tutorials/git-hooks/local-hooks
 '''
-git = gitTA.gitta()
 
 @git.listen('pre-push')
 def prepush(*args, **kwargs):
@@ -40,6 +39,8 @@ def postcommit(*args, **kwargs):
 def postcheckout(*args, **kwargs):
     print(Fore.GREEN)
     print(args, kwargs)
+    branches = git.Branch()
+    branches.undo_checkout(*args, **kwargs)
 
 @git.listen('post-merge')
 def postmerge(*args, **kwargs):
@@ -47,8 +48,7 @@ def postmerge(*args, **kwargs):
     print(args, kwargs)
 
 if __name__ == '__main__':
-    gitTA.gitta.trigger_all_instances(45, event='post-checkout') 
-    # example of what might get passed to postcheckout
+    git.trigger(45, event='post-checkout')  # example of what might get passed to postcheckout
     # the garbled message that appears before (45, ) is the Fore.GREEN. On normal terminals this garbled output will NOT appear
     
 
