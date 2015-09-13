@@ -32,14 +32,15 @@ sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 remote_dest_uri = sys.argv[1]  # generally, uri is the name of the remote
                               # but may instead be the url
 remote_dest_url = sys.argv[2]  # remote destination location
-local_ref = sys.argv[3]  # there was no 4th argument in sys.argv. Had to add by
-                        # reading from stdin
-local_sha1 = sys.argv[4]
-remote_ref = sys.argv[5]
-remote_sha1 = sys.argv[6]
 kwargs = {'remote_dest_uri': remote_dest_uri, 
-    'remote_dest_url': remote_dest_url, 'local_ref': local_ref,
-    'local_sha1': local_sha1, 'remote_ref': remote_ref,
-    'remote_sha1': remote_sha1}
+    'remote_dest_url': remote_dest_url}
+if len(sys.argv) > 3:  # this can fail if pre-push is going to fail anyways?
+    local_ref = sys.argv[3]  # there was no 4th argument in sys.argv. Had to
+                            # add by reading from stdin
+    local_sha1 = sys.argv[4]
+    remote_ref = sys.argv[5]
+    remote_sha1 = sys.argv[6]
+    kwargs.update({'local_ref': local_ref, 'local_sha1': local_sha1,
+                   'remote_ref': remote_ref, 'remote_sha1': remote_sha1})
 gitta_hook.trigger(*sys.argv, **kwargs)
 
