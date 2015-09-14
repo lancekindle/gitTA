@@ -86,10 +86,12 @@ class Hook:
     def trigger_events_in_all_instances(cls, *args, **kwargs):
         repo = kwargs.get('repo_dir', None)
         cls._set_kwargs(kwargs)  # verify kwargs is the same for each function
-        for self in cls._class_instances:
-            if repo:
-                os.chdir(repo)  # verify each function triggers with cwd in repository
-            self.trigger(*args, **kwargs)
+        event = kwargs['event']
+        with ignore(event):  # automatically ignore just-triggered event. Helps prevent recursion if user does the same action through python
+            for self in cls._class_instances:
+                if repo:
+                    os.chdir(repo)  # verify each function triggers with cwd in repository
+                self.trigger(*args, **kwargs)
     
     def _add_event_function(self, event_name, func):
         self.event_functions[event_name] = func
@@ -129,8 +131,6 @@ class Branch:
         else:
             previous = kwargs['head_previous']
         print(previous)
-        # have to prevent undo_checkout from causing git checkout to trigger
-        # post-checkout, which causes undo_checkout to recursively trigger...
-        with ignore('post-checkout'):
+        with ignore('post-checkout'):  # prevent accidental recursion
             subprocess.call(['git', 'checkout', previous])
         
