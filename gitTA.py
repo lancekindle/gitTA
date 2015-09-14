@@ -1,6 +1,7 @@
 from collections import defaultdict
 import os
 import subprocess
+from contextlib import contextmanager
 
 ''' this is the gitTA module. You do not do not modify this file, but instead modify main.py
 to run the code you want
@@ -18,10 +19,48 @@ def listen(event_name):
 def trigger(*args, **kwargs):
     Hook.trigger_events_in_all_instances(*args, **kwargs)
 
+@contextmanager
+def ignore(event_name):
+    ''' call this contextmanager function with an event_name to ignore while
+    in scope (before the with-statement exits. As an example:
+    with ignore('pre-push'):
+        do_some_pushing()
+    # outside scope, pre-push event will be caught once again
+    if an event is set to be ignore multiple times in nested functions like:
+    with ignore('pre-push'):
+        with ignore('pre-push'):
+            do_some_pushing()
+        do_more_pushes()
+    do_caught_pushes()
+    
+    do_more_pushes will not trigger listening pre-push functions because it
+    is still inside the first ignore scope. The only function that will
+    trigger pre-push listeners is do_caught_pushes().
+    '''
+    # disable event here...
+    kwargs = Hook.get_kwargs()  #  Hook will always have the kwargs since 
+            # it is responsible for triggering all the functions
+    repo_dir, git_dir = kwargs['repo_dir'], kwargs['git_dir']
+    os.chdir(git_dir)
+    os.chdir('hooks')  # cd into .git/hooks directory
+    first_context = False
+    if os.path.exists(event_name):
+        os.rename(event_name, event_name + '.ignore')  # "ignore" file by renaming so it won't trigger again during this context
+        first_context = True
+    os.chdir(repo_dir)  # reset directory back to reference (where we expect)
+    try:  # http://preshing.com/20110920/the-python-with-statement-by-example/
+        yield None  # this try-finally block is essential to make sure that
+    finally:        # we re-enable event, even if horrible errors happen
+        if first_context:  # we only re-enable event listening if this was from the first context to ignore this event
+            os.chdir(git_dir)
+            os.chdir('hooks')  # enable event here -- this part will be done no matter what.
+            os.rename(event_name + '.ignore', event_name)
+
 
 class Hook:
     event_functions = defaultdict(list)
     _class_instances = []
+    _kwargs = {}
 
     def __init__(self):
         self.event_functions = self.event_functions.copy()
@@ -32,8 +71,21 @@ class Hook:
         cls._class_instances.append(self)
 
     @classmethod
+    def _set_kwargs(cls, kwargs):
+        cls._kwargs.clear()
+        cls._kwargs.update(kwargs)
+
+    @classmethod
+    def get_kwargs(cls):
+        ''' get keyword arguments that have been passed to every listening
+        function. Can be used as a way to clean up function calls
+        '''
+        return cls._kwargs.copy()
+    
+    @classmethod
     def trigger_events_in_all_instances(cls, *args, **kwargs):
         repo = kwargs.get('repo_dir', None)
+        cls._set_kwargs(kwargs)  # verify kwargs is the same for each function
         for self in cls._class_instances:
             if repo:
                 os.chdir(repo)  # verify each function triggers with cwd in repository
@@ -79,12 +131,6 @@ class Branch:
         print(previous)
         # have to prevent undo_checkout from causing git checkout to trigger
         # post-checkout, which causes undo_checkout to recursively trigger...
-        repo_dir, git_dir = kwargs['repo_dir'], kwargs['git_dir']
-        os.chdir(git_dir)
-        os.chdir('hooks')
-        os.rename('post-checkout', 'post-checkout.disable')
-        os.chdir(repo_dir)  # have to change back to repo_dir to run git
-        subprocess.call(['git', 'checkout', previous])
-        os.chdir(git_dir)
-        os.chdir('hooks')
-        os.rename('post-checkout.disable', 'post-checkout')
+        with ignore('post-checkout'):
+            subprocess.call(['git', 'checkout', previous])
+        
