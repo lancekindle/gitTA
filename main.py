@@ -33,8 +33,8 @@ def postcommit(*args, **kwargs):
 def postcheckout(*args, **kwargs):
     print(Fore.GREEN)  # set so that ALL next prints will be green
     print(args, kwargs)
-    branches = git.Branch()
-    branches.undo_checkout(*args, **kwargs)
+#    branches = git.Branch()
+#    branches.undo_checkout(*args, **kwargs)
 
 @git.listen('post-merge')
 def postmerge(*args, **kwargs):
