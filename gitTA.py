@@ -3,16 +3,15 @@ import os
 import subprocess
 from contextlib import contextmanager
 
-''' this is the gitTA module. You do not do not modify this file, but instead modify main.py
-to run the code you want
+''' this is the gitTA module. You do not do not modify this file, but instead 
+modify main.py to run the code you want
 '''
 def listen(event_name):
     ''' call this function for simplicity when registering
     to listen to a hook-call
     '''
     def wrapper(func):
-        g = Hook()
-        g._add_event_function(event_name, func)
+        Hook.add_listening_function(event_name, func)
         return func
     return wrapper
 
@@ -59,6 +58,10 @@ def ignored(event_name):
 
 class Hook:
     event_functions = defaultdict(list)
+    event_list = ['applypatch-msg', 'commit-msg', 'post-applypatch', 
+            'post-checkout', 'post-commit', 'post-merge', 'post-rewrite',
+            'pre-applypatch', 'pre-auto-gc', 'pre-commit',
+            'prepare-commit-msg', 'pre-push', 'pre-rebase']
     _class_instances = []
     _kwargs = {}
 
@@ -93,29 +96,21 @@ class Hook:
                     os.chdir(repo)  # verify each function triggers with cwd in repository
                 self.trigger(*args, **kwargs)
     
-    def _add_event_function(self, event_name, func):
-        self.event_functions[event_name] = func
-
-    def listen(self, event_name):
-        ''' calling a decorator with an argument is significantly different than calling an argumentless decorator.
-        so in this case, listen only gets the event_name, and the wrapper function is called immediately with the
-        function to decorate
-        : a wrapper to call each "registered/wrapped" event function when the event name matches 
-        '''
-        def wrapper(func):
-            ''' wrapper gets called immediately with the function to register. What wrapper returns will be the
-            replacement function
-            '''
-            self._add_event_function(event_name, func)
-            return func  # return function unmodified
-        return wrapper
+    @classmethod
+    def add_listening_function(cls, event_name, func):
+        if event_name not in cls.event_list:
+            raise KeyError(str(event_name) + ' not a valid local git-hook' + \
+                    ' event. Listed next are valid: ' + str(cls.event_list))
+        self = cls()
+        self.event_functions[event_name].append(func)
         
     def trigger(self, *args, **kwargs):
         event = kwargs.get('event', None)
         if event not in self.event_functions:
             return  # it might also be good to log somewhere that no function was called
-        f = self.event_functions[event]
-        f(*args, **kwargs)  # trigger function
+        functions = self.event_functions[event]
+        for f in functions:
+            f(*args, **kwargs)  # trigger function
 
 
 class Branch:
