@@ -8,14 +8,15 @@
 # rebased, and is not set when rebasing the current branch.
 import gitta_hook
 import sys
-from subprocess import check_output
+from subprocess import check_output, PIPE
 sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 branch_upstream = sys.argv[1]
 kwargs = {'branch_upstream': branch_upstream}
 if len(sys.argv) > 2:
     branch_rebasing = sys.argv[2]
 else:  # branch_rebasing is current branch. WARNING: if your head is not at end of branch, does it rebase from the head, or all the way to end of branch?
-    branch_rebasing = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
+    branch_rebasing = check_output(['git', 'symbolic-ref', '--short', 'HEAD'], 
+            stdin=PIPE, universal_newlines=True).strip()
 kwargs['branch_rebasing'] = branch_rebasing
 gitta_hook.trigger(*sys.argv, **kwargs)
 

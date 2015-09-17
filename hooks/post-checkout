@@ -17,7 +17,7 @@
 # properties.
 import sys
 import gitta_hook
-from subprocess import check_output
+from subprocess import check_output, PIPE
 sys.argv.extend(sys.stdin.read().split())  # add stdin arguments
 head_previous = sys.argv[1]  # where the head previously was before checkout
 head_current = sys.argv[2]  # where the head now sits. If it was a branch
@@ -26,8 +26,9 @@ is_branch_checkout = sys.argv[3]  # 1 or 0 flag indicating if checkout was
         # a branch checkout (1) or retrieving a file from index (0)
 kwargs = {'head_previous': head_previous, 'head_current':head_current,
           'is_branch_checkout': is_branch_checkout}
-reflog = check_output(['git', 'reflog', '-n', '1']).strip()
-last_action = reflog.decode('ascii').split()
+reflog = check_output(['git', 'reflog', '-n', '1'], stdin=PIPE, 
+        universal_newlines=True)  # last 2 options give str output
+last_action = reflog.strip().split()
     # e.g. a[090560c, HEAD@{0}:, checkout:, moving, from, b_old, to, b_new]
 if 'checkout:' in last_action:
 #    branch_current = last_action[-1]  # can be sha1 or branch. Ignore
