@@ -37,6 +37,7 @@ def ignored(event_name):
     do_some_pushing will trigger pre-push listeners.
     '''
     # disable event here...
+    Hook.raise_error_if_not_valid_event(event_name)
     kwargs = Hook.get_kwargs()  #  Hook will always have the kwargs since 
             # it is responsible for triggering all the functions
     repo_dir, git_dir = kwargs['repo_dir'], kwargs['git_dir']
@@ -95,12 +96,16 @@ class Hook:
                 if repo:
                     os.chdir(repo)  # verify each function triggers with cwd in repository
                 self.trigger(*args, **kwargs)
-    
+
     @classmethod
-    def add_listening_function(cls, event_name, func):
+    def raise_error_if_not_valid_event(cls, event_name):
         if event_name not in cls.event_list:
             raise KeyError(str(event_name) + ' not a valid local git-hook' + \
                     ' event. Listed next are valid: ' + str(cls.event_list))
+
+    @classmethod
+    def add_listening_function(cls, event_name, func):
+        cls.raise_error_if_not_valid_event(event_name)
         self = cls()
         self.event_functions[event_name].append(func)
         
