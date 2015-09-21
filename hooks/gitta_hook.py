@@ -1,6 +1,6 @@
 import os
 import sys
-from subprocess import check_output, CalledProcessError
+from subprocess import check_output, PIPE
 
 def trigger(*args, **kwargs):
     repo_dir = os.getcwd()  # current directory is where repository resides
@@ -21,10 +21,12 @@ def trigger(*args, **kwargs):
 #    except CalledProcessError:  # will print "fatal: ref..." but won't abort
 #        branch_current = None  # for when the HEAD is detached
     cmd = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
-    branch_current = check_output(cmd).strip()  # return HEAD if detached
+    branch_current = check_output(cmd, universal_newlines=True, 
+            stdin=PIPE).strip()  # return HEAD if detached
     if branch_current == 'HEAD':
         branch_current = None  # indicate that we are not on a branch
-    head_current = check_output(['git', 'rev-parse', 'HEAD']).strip()  # get sha1
+    head_current = check_output(['git', 'rev-parse', 'HEAD'], stdin=PIPE,
+            universal_newlines=True).strip()  # get sha1
     kwargs['branch_current'] = branch_current
     kwargs['head_current'] = head_current
     sys.path.append(path_to_gitta_pyfiles)    # add path so that importing main
